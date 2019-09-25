@@ -6,7 +6,7 @@ Config.Locale                 = 'en'    -- Only defaultly supports English, feel
 Config.SwitchCharacterSup     = true    -- Optional Please ensure you have added xXFriendlysXx Switch Character fix aswell.
 
 Config.RoomMarker = {
-    Owned = {r = 255, g = 0, b = 0},     -- Owned Motel Color
+    Owned = {r = 196, g = 42, b = 190},     -- Owned Motel Color
 	x = 0.5, y = 0.5, z = 0.7  -- Standard Size Circle
 }
 

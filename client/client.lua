@@ -74,30 +74,9 @@ AddEventHandler('lsrp-motels:cancelRental', function(room)
         end
     end
     TriggerServerEvent("lsrp-motels:cancelRental", room)
-    TriggerEvent("mythic_progbar:client:progress", {
-        name = "renting_motel",
-        duration = 2000,
-        label = "Cancelling Contract for room "..motelRoom,
-        useWhileDead = false,
-        canCancel = true,
-        controlDisables = {
-                disableMovement = true,
-                disableCarMovement = false,
-                disableMouse = false,
-                disableCombat = true,
-        },
-        animation = {
-            animDict = "missheistdockssetup1clipboard@idle_a",
-anim = "idle_a",
-        },
-        prop = {
-            model = "prop_notepad_01"	
-        }
-}, function(status)
         if not status then
             myMotel = false
         end
-end)
 end)
 
 function PlayerDressings()
@@ -105,7 +84,7 @@ function PlayerDressings()
     ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'room',
 	{
 		title    = 'Player Clothing',
-		align    = 'top-left',
+		align    = 'left',
 		elements = {
             {label = _U('player_clothes'), value = 'player_dressing'},
 	        {label = _U('remove_cloth'), value = 'remove_cloth'}
@@ -127,7 +106,7 @@ function PlayerDressings()
 				ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'player_dressing',
 				{
 					title    = _U('player_clothes'),
-					align    = 'top-left',
+					align    = 'left',
 					elements = elements
 				}, function(data2, menu2)
 
@@ -161,7 +140,7 @@ function PlayerDressings()
 
 				ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'remove_cloth', {
 					title    = _U('remove_cloth'),
-					align    = 'top-left',
+					align    = 'left',
 					elements = elements
 				}, function(data2, menu2)
 					menu2.close()
@@ -265,11 +244,11 @@ AddEventHandler('lsrp-motels:roomOptions', function(room, motel)
     ESX.UI.Menu.Open(
         'default', GetCurrentResourceName(), 'lsrp-motels',
         {
-            title    = motelName..' Room '..motelRoom,
-            align    = 'top-right',
+            title    = motelName..' Rum '..motelRoom,
+            align    = 'left',
             elements = { 
-                { label = 'Enter Room', value = 'enter' },
-                { label = 'Cancel Rental', value = 'cancel' }
+                { label = 'Gå in i ditt rum', value = 'enter' },
+                { label = 'Säg upp hyreskontraktet', value = 'cancel' }
             }
         },
     function(data, entry)
@@ -309,12 +288,12 @@ AddEventHandler('lsrp-motels:roomMenu', function(room, motel)
         options = {}
 
         if Config.SwitchCharacterSup then
-        table.insert(options, {label = 'Change Character', value = 'changechar'})
+        table.insert(options, {label = 'Byt karaktär', value = 'changechar'})
         end
-        table.insert(options, {label = 'Leave Room', value = 'leaveroom'})
+        table.insert(options, {label = 'Gå ut ur rummet', value = 'leaveroom'})
         if roomOwner == playerIdent then
-        table.insert(options, {label = 'Open Room Inventory', value = 'inventory'})
-        table.insert(options, {label = 'Invite Citizen', value = 'inviteplayer'})
+        table.insert(options, {label = 'Förråd', value = 'inventory'})
+        table.insert(options, {label = 'Bjud in person till ditt rum', value = 'inviteplayer'})
         end
         
         
@@ -322,8 +301,8 @@ AddEventHandler('lsrp-motels:roomMenu', function(room, motel)
     ESX.UI.Menu.Open(
         'default', GetCurrentResourceName(), 'lsrp-motels',
         {
-            title    = motelName..' Room '..motelRoom,
-            align    = 'top-right',
+            title    = motelName..' Rum '..motelRoom,
+            align    = 'left',
             elements = options
         },
     function(data, menu)
@@ -331,25 +310,10 @@ AddEventHandler('lsrp-motels:roomMenu', function(room, motel)
         if value == 'changechar' then
             menu.close()
             TriggerServerEvent("kashactersS:SaveSwitchedPlayer")
-            TriggerEvent("mythic_progbar:client:progress", {
-                name = "renting_motel",
-                duration = 2000,
-                label = "Leaving the City",
-                useWhileDead = false,
-                canCancel = true,
-                controlDisables = {
-                        disableMovement = true,
-                        disableCarMovement = false,
-                        disableMouse = false,
-                        disableCombat = true,
-                },
-                
-        }, function(status)
                 if not status then
                     
                     TriggerEvent('kashactersC:ReloadCharacters')
                 end
-        end)
         
         elseif value == 'leaveroom' then
         menu.close()
@@ -359,26 +323,11 @@ AddEventHandler('lsrp-motels:roomMenu', function(room, motel)
 
             owner = ESX.GetPlayerData().identifier
         if roomOwner == owner then
-                    TriggerEvent("mythic_progbar:client:progress", {
-                        name = "renting_motel",
-                        duration = 1500,
-                        label = "Accessing Room Inventory",
-                        useWhileDead = false,
-                        canCancel = true,
-                        controlDisables = {
-                                disableMovement = true,
-                                disableCarMovement = false,
-                                disableMouse = false,
-                                disableCombat = true,
-                        },
-                        
-                }, function(status)
-                        if not status then
-                            OpenPropertyInventoryMenu('motels', owner)
-                        end
-                end)    
+                if not status then
+                    OpenPropertyInventoryMenu('motels', owner)
+                end
         else
-            TriggerClientEvent('esx:showNotification', '~w~Accessible by Motel ~r~Owner~w~ only!')  
+            TriggerClientEvent('esx:showNotification', '~w~Enbart tillgänglig av rum ~r~Ägaren')  
         end
         elseif value == 'inviteplayer' then
             local myInstance = nil
@@ -401,13 +350,13 @@ AddEventHandler('lsrp-motels:roomMenu', function(room, motel)
                     end
                 end
             else
-                table.insert(elements, {label = 'No Citizens Outside.'})
+                table.insert(elements, {label = 'Det står ingen utanför.'})
             end
 
 			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'room_invite',
 			{
-				title    = motelName..' Room '..motelRoom .. ' - ' .. _U('invite') ..' Citizen',
-				align    = 'top-right',
+				title    = motelName..' Rum '..motelRoom .. ' - ' .. _U('invite') ..' Citizen',
+				align    = 'left',
 				elements = elements,
             }, function(data2, menu2)
                 ESX.TriggerServerCallback('lsrp-motels:getMotelRoomID', function(roomno)
@@ -445,31 +394,9 @@ AddEventHandler('lsrp-motels:rentRoom', function(room)
         end
     end
     TriggerServerEvent('lsrp-motels:rentRoom', room)
-    TriggerEvent("mythic_progbar:client:progress", {
-        name = "renting_motel",
-        duration = 2000,
-        label = "Renting Room "..motelRoom,
-        useWhileDead = false,
-        canCancel = true,
-        controlDisables = {
-                disableMovement = true,
-                disableCarMovement = false,
-                disableMouse = false,
-                disableCombat = true,
-        },
-        animation = {
-            animDict = "missheistdockssetup1clipboard@idle_a",
-anim = "idle_a",
-        },
-        prop = {
-            model = "prop_notepad_01"	
-        }
-}, function(status)
         if not status then
 
         end
-end)
-
 end)
 
 function roomMarkers()
@@ -481,7 +408,7 @@ function roomMarkers()
             distance = GetDistanceBetweenCoords(coords, v.roomExit.x, v.roomExit.y, v.roomExit.z, true)
             if (distance < 1.0) then
                 if curRoom ~= nil then
-                    DrawText3D(v.roomExit.x, v.roomExit.y, v.roomExit.z + 0.35, 'Press [~g~E~s~] to exit')
+                    DrawText3D(v.roomExit.x, v.roomExit.y, v.roomExit.z + 0.35, 'Tryck [~p~E~s~] för att gå ut')
                     if IsControlJustReleased(0, Keys['E']) then
                         ESX.UI.Menu.CloseAll()
                         TriggerEvent('lsrp-motels:exitRoom', curMotel, curRoom)
@@ -495,7 +422,7 @@ function roomMarkers()
     for k,v in pairs(Config.Zones) do
         distance = GetDistanceBetweenCoords(coords, v.Menu.x, v.Menu.y, v.Menu.z, true)
         if distance < 1.0 then
-            DrawText3D(v.Menu.x, v.Menu.y, v.Menu.z + 0.35, 'Press [~g~E~s~] to access menu.')
+            DrawText3D(v.Menu.x, v.Menu.y, v.Menu.z + 0.35, 'Tryck [~p~E~s~] för att öppna menyn.')
                 if IsControlJustReleased(0, Keys['E']) then
                     TriggerEvent('lsrp-motels:roomMenu', curRoom, curMotel)
                 end
@@ -507,7 +434,7 @@ function roomMarkers()
         distance = GetDistanceBetweenCoords(coords, v.Inventory.x, v.Inventory.y, v.Inventory.z, true)
         if distance < 1.0 then
             if roomOwner == playerIdent then
-            DrawText3D(v.Inventory.x, v.Inventory.y, v.Inventory.z + 0.35, 'Press [~g~E~s~] to change outfit.')
+            DrawText3D(v.Inventory.x, v.Inventory.y, v.Inventory.z + 0.35, 'Trycj [~p~E~s~] för att byta om.')
                 if IsControlJustReleased(0, Keys['E']) then
                     PlayerDressings()
                 end
@@ -520,7 +447,7 @@ function roomMarkers()
         distance = GetDistanceBetweenCoords(coords, v.BedStash.x, v.BedStash.y, v.BedStash.z, true)
         if distance < 1.0 then
             if roomOwner == playerIdent then
-            DrawText3D(v.BedStash.x, v.BedStash.y, v.BedStash.z + 0.1, 'Press [~g~E~s~] to access stash.')
+            DrawText3D(v.BedStash.x, v.BedStash.y, v.BedStash.z + 0.1, 'Tryck [~p~E~s~] för att kolla under madrassen.')
                 if IsControlJustReleased(0, Keys['E']) then
                     OpenStash()
                 end
@@ -542,10 +469,10 @@ if myMotel then
             if vm.instancename == myMotel then
                 distance = GetDistanceBetweenCoords(coords, vm.entry.x, vm.entry.y, vm.entry.z, true)
                 if (distance < v.Boundries) then
-                DrawMarker(20, vm.entry.x, vm.entry.y, vm.entry.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.RoomMarker.x, Config.RoomMarker.y, Config.RoomMarker.z, Config.RoomMarker.Owned.r, Config.RoomMarker.Owned.g, Config.RoomMarker.Owned.b, 100, false, true, 2, false, false, false, false)	
+                DrawMarker(0, vm.entry.x, vm.entry.y, vm.entry.z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.RoomMarker.x, Config.RoomMarker.y, Config.RoomMarker.z, Config.RoomMarker.Owned.r, Config.RoomMarker.Owned.g, Config.RoomMarker.Owned.b, 100, false, true, 2, false, false, false, false)	
                 end
                 if (distance < 1.0) then
-                    DrawText3D(vm.entry.x, vm.entry.y, vm.entry.z + 0.35, 'Press [~g~E~s~] for options.')
+                    DrawText3D(vm.entry.x, vm.entry.y, vm.entry.z + 0.35, 'Tryck [~p~E~s~] för alternativ.')
                     if IsControlJustReleased(0, Keys['E']) then
                         TriggerEvent("lsrp-motels:roomOptions", vm.instancename, k)
                     end
@@ -560,7 +487,7 @@ else
                 for km,vm in pairs(v.Rooms) do
                     distance = GetDistanceBetweenCoords(coords, vm.entry.x, vm.entry.y, vm.entry.z, true)
                     if (distance < 1.0) then
-                        DrawText3D(vm.entry.x, vm.entry.y, vm.entry.z + 0.35, 'Press [~g~E~s~] to rent Room ~b~'..vm.number..' ~w~for $~b~'..Config.PriceRental)
+                        DrawText3D(vm.entry.x, vm.entry.y, vm.entry.z + 0.35, 'Tryck [~p~E~s~] för att hyra rum: ~b~~p~'..vm.number..' ~w~för ~p~~b~'..Config.PriceRental .. ' Sek')
                         if IsControlJustReleased(0, Keys['E']) then
                             TriggerEvent('lsrp-motels:rentRoom', vm.instancename)
                         end
@@ -647,26 +574,11 @@ function OpenStash()
     owner = ESX.GetPlayerData().identifier
     ESX.TriggerServerCallback('lsrp-motels:checkIsOwner', function(isOwner)
         if isOwner then
-                    TriggerEvent("mythic_progbar:client:progress", {
-                        name = "renting_motel",
-                        duration = 1500,
-                        label = "Accessing Stash",
-                        useWhileDead = false,
-                        canCancel = true,
-                        controlDisables = {
-                                disableMovement = true,
-                                disableCarMovement = false,
-                                disableMouse = false,
-                                disableCombat = true,
-                        },
-                        
-                }, function(status)
                         if not status then
                             OpenPropertyInventoryMenuBed('motelsbed', owner)
-                        end
-                end)    
+                        end  
         else
-            TriggerEvent('esx:showNotification', '~w~Accessible by Motel ~r~Owner~w~ only!')  
+            TriggerEvent('esx:showNotification', '~w~Enbart tillgänglig av rum ~r~Ägaren')  
         end
     end, curRoom, owner)
 end
@@ -686,6 +598,6 @@ DrawText3D = function(x, y, z, text)
 		AddTextComponentString(text)
         DrawText(_x,_y)
         local factor = (string.len(text)) / 370
-        DrawRect(_x, _y + 0.0150, 0.030 + factor , 0.030, 66, 66, 66, 150)
+        --DrawRect(_x, _y + 0.0150, 0.030 + factor , 0.030, 66, 66, 66, 150)
 	end
 end
